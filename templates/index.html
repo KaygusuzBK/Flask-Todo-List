@@ -1,9 +1,15 @@
 {% extends "layout.html" %}
 
-{% block content %}
-  <p> content</p>
-{% endblock  %}
+{% block body %}
+<div class="jumbotron ">
+   <H3 class="text-center">HOŞGELDİNİZ</H3>
+   <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates, commodi!</p>
+   <ul>
+      {% for article in articles  %}
 
-{% block title %}
-  Ana Sayfa
-{% endblock title %}
+        
+      {% endfor %}
+   </ul>
+
+</div>
+{% endblock body %}
