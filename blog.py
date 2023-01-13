@@ -25,6 +25,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -36,7 +37,17 @@ def about():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
-    if request.method == "POST":
+
+    if request.method == "POST" and form.validate():
+        name = form.name.data
+        email = form.email.data
+        username = form.username.data
+        password = sha256_crypt.hash(str(form.password.data))
+        cursor = mysql.connection.cursor()
+        sorgu = "Insert into users(name,email,username,password) VALUES(%s,%s,%s,%s)"
+        mysql.connection.commit()
+        cursor.close()
+
         return redirect(url_for('index'))
     else:
             return render_template("register.html", form = form)
