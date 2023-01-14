@@ -44,11 +44,12 @@ def register():
         username = form.username.data
         password = sha256_crypt.hash(str(form.password.data))
         cursor = mysql.connection.cursor()
-        sorgu = "Insert into users(name,email,username,password) VALUES(%s,%s,%s,%s)"
+        sorgu = "Insert into user(name,email,username,password) VALUES(%s,%s,%s,%s)"
+        cursor.execute(sorgu,(name,email,username,password))
         mysql.connection.commit()
         cursor.close()
 
-        return redirect(url_for('index'))
+        return(sorgu)
     else:
             return render_template("register.html", form = form)
             
