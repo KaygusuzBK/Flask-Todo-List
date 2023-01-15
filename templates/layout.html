@@ -14,10 +14,12 @@
   </head>
   <body>
     {% include "includes/navbar.html" %}
-    <div class="container"> 
-      <br><br><br>
+    <br><br><br>
+    <class="container" style=" padding: 110px; text-align: center;"> 
+      {% include "includes/messages.html" %} 
       {% block body %}
-      
+
+
       {% endblock body %}
     </div>
 
