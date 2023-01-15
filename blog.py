@@ -14,14 +14,21 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField('Confirm Password')
 
+class LoginForm(Form):
+    username = StringField('Username')
+    password = PasswordField('Password')
+    
 
 app = Flask(__name__)
+app.secret_key = "blog"
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'blog'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+
 
 mysql = MySQL(app)
 
@@ -48,11 +55,34 @@ def register():
         cursor.execute(sorgu,(name,email,username,password))
         mysql.connection.commit()
         cursor.close()
-
-        return(sorgu)
+        flash("You are registered","success")
+        return redirect(url_for('login'))
     else:
             return render_template("register.html", form = form)
             
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    if request.method == "POST":
+        username = form.username.data
+        password_entered = form.password.data
+        cursor = mysql.connection.cursor()
+        sorgu = "Select * From user where username = %s"
+        result = cursor.execute(sorgu,(username,))
+        if result > 0:
+            data = cursor.fetchone()
+            real_password = data["password"]
+            if sha256_crypt.verify(password_entered,real_password):
+                flash("You are logged in","success")
+                return redirect(url_for('index'))
+            else:
+                flash("Password is wrong","danger")
+                return redirect(url_for('login'))
+        else:
+            flash("There is no such user","danger")
+            return redirect(url_for('login'))
+     
+    return render_template("login.html", form = form)
 
 if __name__ == '__main__':
     app.run(debug=True)
