@@ -21,13 +21,21 @@
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">
+      {% if session["logged_in"] %} <!-- login yapıldıysa çalışır-->
+      <li class="nav-item active">
+        <a class="nav-link" href="/dashboard">Konrol paneli</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/logout">Çıkış</a>
+      </li>
+      {% else %} <!-- login yapan yoksa çalışır -->
       <li class="nav-item active">
         <a class="nav-link" href="/login">Giriş</a>
       </li>
+      {% endif %}
       <li class="nav-item active">
         <a class="nav-link" href="/register">Kayıt Olun</a>
       </li>
-
     </ul>
   </div>
 </nav>
