@@ -6,7 +6,9 @@
    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptates, commodi!</p>
    <ul>
       {% for article in articles  %}
-
+      <li class="list-group-item">{{article.title}}</li>
+      <li class="list-group-item">{{article.content}}</li>
+      <br><br>
         
       {% endfor %}
    </ul>

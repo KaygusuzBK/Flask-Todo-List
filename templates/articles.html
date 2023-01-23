@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h3>Notlar</h3>
+<br>
+
+
+<ul class="list-group">
+    {% for article in articles %}
+    <li class="list-group-item">{{article.title}}</li>
+    <li class="list-group-item">{{article.content}}</li>
+    <br><br>
+    {% endfor %}
+</ul>
+
+{% endblock body %}
