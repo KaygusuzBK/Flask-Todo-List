@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash,sessions,logging
+from flask import Flask, render_template, request, redirect, url_for, flash,session,logging
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -41,6 +41,10 @@ def index():
 def about():
     return render_template("about.html")
 
+@app.route('/dashboard')
+def dashboard():
+    return render_template("dashboard.html")
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
@@ -71,18 +75,26 @@ def login():
         result = cursor.execute(sorgu,(username,))
         if result > 0:
             data = cursor.fetchone()
-            real_password = data["password"]
+            real_password = data["password"] 
             if sha256_crypt.verify(password_entered,real_password):
-                flash("You are logged in","success")
+                flash("Success Bro","success")
+                session["logged_in"] = True # session oluşturduk,kontrol için kullanacağız
+                session["username"] = username #aynı şekilde bir de username oluşturduk
                 return redirect(url_for('index'))
             else:
-                flash("Password is wrong","danger")
+                flash("Password false","danger")
                 return redirect(url_for('login'))
         else:
-            flash("There is no such user","danger")
+            flash("Böyle biri yok","danger")
             return redirect(url_for('login'))
      
     return render_template("login.html", form = form)
+@app.route('/logout')
+def logout():
+    session.clear() # sessionu sildik
+    return redirect(url_for('index'))
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
