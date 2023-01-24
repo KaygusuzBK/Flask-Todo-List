@@ -67,7 +67,15 @@ def articles():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * From articles where author = %s"
+    result = cursor.execute(sorgu,(session["username"],))
+    if result > 0:
+        articles = cursor.fetchall()
+        return render_template("dashboard.html", articles = articles)
+    else:
+        return render_template("dashboard.html")
+        
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -111,8 +119,22 @@ def login():
         else:
             flash("Böyle biri yok","danger")
             return redirect(url_for('login'))
-     
+    
+@app.route('/article/<string:id>')
+def article(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * From articles where id = %s"
+    result = cursor.execute(sorgu,(id,))
+    if result > 0:
+        article = cursor.fetchone()
+        return render_template("article.html", article = article)
+    else:
+        return render_template("article.html")
+
+
     return render_template("login.html", form = form)
+
+#çıkış yapma
 @app.route('/logout')
 def logout():
     session.clear() # sessionu sildik
@@ -133,6 +155,51 @@ def addarticle():
         flash("Başarıyla eklendi","success")
         return redirect(url_for('dashboard'))
     return render_template("addarticle.html", form = form)
+
+#silme
+@app.route('/delete/<string:id>')
+@login_required #sadece giriş yapanlar silme işlemi yapabilir
+def delete(id):
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * From articles where author = %s and id = %s"
+    result = cursor.execute(sorgu,(session["username"],id))
+    if result > 0:
+        sorgu2 = "Delete From articles where id = %s"
+        cursor.execute(sorgu2,(id,))
+        mysql.connection.commit()
+        return redirect(url_for('dashboard'))
+    else:
+        flash("Silemezsiniz,böyle bir notunuz olmayabilir","danger")
+        return redirect(url_for('index'))
+
+#güncelleme
+@app.route('/update/<string:id>', methods=['GET', 'POST'])
+@login_required
+def update(id):
+    if request.method == "GET":
+        cursor = mysql.connection.cursor()
+        sorgu = "Select * From articles where id = %s and author = %s"
+        result = cursor.execute(sorgu,(id,session["username"]))
+        if result == 0:
+            flash("YAPAMAZSINIZ veya Yetkiniz yok,","danger")
+            return redirect(url_for('index'))
+        else:
+            article = cursor.fetchone()
+            form = ArticleForm()
+            form.title.data = article["title"]
+            form.content.data = article["content"]
+            return render_template("update.html", form = form)
+    else:
+        #post kısmımız
+        form = ArticleForm(request.form)
+        newTitle = form.title.data
+        newContent = form.content.data
+        sorgu2 = "Update articles Set title = %s, content = %s where id = %s"
+        cursor = mysql.connection.cursor()
+        cursor.execute(sorgu2,(newTitle,newContent,id))
+        mysql.connection.commit()
+        flash("Notunuz başarıyla güncellendi","success")
+        return redirect(url_for('dashboard'))
 
 #makale form
 class ArticleForm(Form):

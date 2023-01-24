@@ -2,9 +2,46 @@
 
 {% block body %}
 
+    
     <p>HOŞ GELDİNİZ ,{{session.username}}</p><!-- session["username"] şeqlinde de yazabilirz-->
     <hr>
     <center>
-        <a href="/addarticle" class = "btn btn-success">Makale Ekle</a>
+        <a href="/addarticle" class = "btn btn-success">Not Ekle</a>
     </center> 
+    <br>
+
+    {% if articles  %}
+    <table class="table table-striped" >
+        <thead >
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Yazar</th>
+                <th scope="col">Başlık</th>
+                <th scope="col">İçerik</th>
+                <th scope="col">Tarih</th>
+                <th scope="col">İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr >
+                <th  style=" border: 1px solid black;"  scope="row">{{article.id}}</th>
+                <td>{{article.author}}</td>
+                <td><a href="/article/{{article.id}}">{{article.title}}</a></td>
+                <td>{{article.content|safe}}</td> <!--safe filtresi html kodlarını çevirmeye yarıyor -->
+                <td>{{article.created_date}}</td>
+                <td>
+                    <a href="/update/{{article.id}}" class="btn btn-primary">Güncelle</a>
+                    <a href="/delete/{{article.id}}" class="btn btn-danger">Sil</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% else %}
+    </table>
+    <div class="alert alert-danger">Not Yok</div>
+      
+    {% endif %}
+    
+
 {% endblock %}
