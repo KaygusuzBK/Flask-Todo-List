@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+{% if article %}
+<h1>{{article.title}}</h1>
+<hr>
+<p>{{article.content|safe}}</p>  <!--safe filtresi html kodlarını çevirmeye yarıyor -->
+<hr>
+<h6>{{article.created_date}}</h6> 
+<hr>
+
+{% else %}
+<div class="alert alert-danger"> Böyle bir Notunuz yok</div>
+{% endif %}
+
+
+{% endblock body %}
