@@ -1,14 +1,13 @@
-{% extends "layout.html" %}
+{% extends "layout.html" %} {% block body %}
 
-{% block body %}
 
-<h1> GiRİŞ </h1>
-<hr>
 {% from "includes/formshelpers.html" import render_field %}
 
+<h3>GİRİŞ YAP</h3>
 <form method="post">
-    {{ render_field(form.username) }}
-    {{ render_field(form.password) }}
-    <button type="submit" class="btn btn-success">Giriş</button>
+  {{ render_field(form.username) }} 
+  {{ render_field(form.password) }}
+  <button type="submit" class="btn btn-success">Giriş yap</button>
 </form>
+
 {% endblock body %}

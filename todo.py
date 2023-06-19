@@ -107,18 +107,19 @@ def login():
         result = cursor.execute(sorgu,(username,))
         if result > 0:
             data = cursor.fetchone()
-            real_password = data["password"] 
+            real_password = data["password"]
             if sha256_crypt.verify(password_entered,real_password):
-                flash("Success Bro","success")
-                session["logged_in"] = True # session oluşturduk,kontrol için kullanacağız
-                session["username"] = username #aynı şekilde bir de username oluşturduk
-                return redirect(url_for('index'))
+                flash("Başarıyla giriş yaptınız","success")
+                session["logged_in"] = True
+                session["username"] = username
+                return redirect(url_for("index"))
             else:
-                flash("Password false","danger")
-                return redirect(url_for('login'))
+                flash("Parola yanlış","danger")
+                return redirect(url_for("login"))
         else:
-            flash("Böyle biri yok","danger")
-            return redirect(url_for('login'))
+            flash("Böyle bir kullanıcı yok","danger")
+            return redirect(url_for("login"))
+    return render_template("login.html", form = form)
     
 @app.route('/article/<string:id>')
 def article(id):
